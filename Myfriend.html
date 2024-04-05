@@ -1,0 +1,238 @@
+<!Doctype html>
+<html lang="en"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Myfriend</title>
+    <style>
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        body {
+	        font-family: 'Poppins', sans-serif;
+	        font-size:14px;
+	        color:#a09e9c;
+            text-transform:initial;
+            max-width:1920px;
+            margin:0 auto;
+	        overflow-x:hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class ="container">
+    <button id="go"type="button" class="btn btn-danger">Go</button>
+    </div>
+</body>
+<script>
+    let friend_list=[]
+    const page1 = document.querySelector('.container');
+    const Go = document.getElementById("go");
+    Go.addEventListener('click',function(){
+        reset_remove();
+        const randomNumber = Math.floor(Math.random() * 9) + 1;
+        friend_input(randomNumber);
+    });
+    function friend_input(num){
+        const text=document.createElement('h1');
+        text.innerText='Fill information'
+        page1.appendChild(text);
+        for(let i=0;i<num;i++){
+            const page2=document.createElement('div');
+            page2.innerHTML=`
+                <div class="container px-4 text-center">
+                    <div class="row gx-5">
+                        <div class="col">
+                            <input class="p-3" id="name${i}" type="text" pattern="\d*" title="Please enter your name" placeholder="Name">
+                        </div>
+                        <div class="col">
+                            <input class="p-3" id="Age${i}" type="text" pattern="\d*" title="Please enter an integer" placeholder="Age">
+                        </div>
+                    </div>
+                </div>
+                `;
+            page1.appendChild(page2);
+            }
+            const div = document.createElement('div');
+            div.className ="btn-group"
+            const button=document.createElement('button');
+            button.id ="next";
+            button.className="btn btn-success";
+            button.textContent="next";
+            page1.appendChild(button);
+            button.addEventListener('click',() => {
+                save_Information(num);
+                validate(num);
+            });
+            const reset = document.createElement('button');
+            reset.id="Reset";
+            reset.className="btn btn-danger";
+            reset.textContent ="Reset";
+            page1.appendChild(reset);
+            reset.addEventListener('click',() => {
+                page1.innerHTML='';
+                friend_list.length=0;
+                let random = Math.floor(Math.random()*9)+1;
+                friend_input(random);
+            });
+        }
+    function save_Information (num){
+        for(let i=0;i<num;i++){
+            const nameInput = document.getElementById(`name${i}`);
+            const ageInput = document.getElementById(`Age${i}`);
+
+            const name = nameInput.value;
+            const age = parseInt(ageInput.value);
+            if(name==="" || age===NaN){
+                break;
+            }
+            friend_list.push({ name, age });
+            console.log(friend_list[i])
+        }
+    }
+    function calculate_Total_Age(){
+        const totalAge = friend_list.reduce((acc, friend) => acc + parseInt(friend.age), 0);
+        const total = document.createElement('p');
+        total.textContent = `Total Age: ${totalAge}`;
+        page1.appendChild(total);
+    }
+    function calculate_Average_Age(){
+        const total = friend_list.reduce((acc, friend) => acc + parseInt(friend.age), 0);
+        const avg =total/friend_list.length;
+        const p = document.createElement('p');
+        p.textContent = `Average Age: ${avg}`;
+        page1.appendChild(p)
+    }
+    function findMin(){
+        const minAge = Math.min(...friend_list.map(friend => parseInt(friend.age)));
+        const minAgeCount = friend_list.reduce((count, friend) => {
+        if (parseInt(friend.age) === minAge) {
+            count++;
+        }
+        return count;
+        }, 0);
+        if(minAgeCount>1){
+            friend_list.forEach(friend => {
+                const total = document.createElement('p');
+                total.textContent = `Name: ${friend.name} Age: ${friend.age}`;
+                page1.appendChild(total);
+    });
+        }
+        else{
+            const minName = friend_list.reduce((count, friend) => {
+            if (parseInt(friend.age) === minAge) {
+                const total = document.createElement('p');
+                    total.textContent = `Name: ${friend.name} Age: ${friend.age}`;
+                    page1.appendChild(total);
+            }
+            return count;
+            }, 0);
+        }
+    }
+    function findMax(){
+        const maxAge = Math.max(...friend_list.map(friend => parseInt(friend.age)));
+        const maxAgeCount = friend_list.reduce((count, friend) => {
+        if (parseInt(friend.age) === maxAge) {
+            count++;
+        }
+        return count;
+        }, 0);
+        if(maxAgeCount>1){
+            friend_list.forEach(friend => {
+                const total = document.createElement('p');
+                total.textContent = `Name: ${friend.name} Age: ${friend.age}`;
+                page1.appendChild(total);
+    });
+        }
+        else{
+            const maxName = friend_list.reduce((count, friend) => {
+            if (parseInt(friend.age) === maxAge) {
+                const total = document.createElement('p');
+                    total.textContent = `Name: ${friend.name} Age: ${friend.age}`;
+                    page1.appendChild(total);
+            }
+            return count;
+            }, 0);
+        }
+    }
+    function validate(num){
+        if (friend_list.length === num){
+            page1.innerHTML=''
+            showoption();
+        }
+        else{
+            page1.innerHTML='';
+            friend_input(num);
+        }
+    }
+    function showoption(){
+        const div = document.createElement('div');
+        div.className ="overflow-hidden text-center"
+        
+        const Total = document.createElement('button');
+            Total.id="Total";
+            Total.className="btn btn-danger";
+            Total.textContent ="Total";
+            div.appendChild(Total);
+            Total.addEventListener('click',() => {
+                calculate_Total_Age();
+            });
+
+        const  AVG = document.createElement('button');
+            AVG.id="AVG";
+            AVG.className="btn btn-danger";
+            AVG.textContent ="Average";
+            div.appendChild(AVG);
+            AVG.addEventListener('click',() => {
+                calculate_Average_Age();
+            });
+        
+        const  Max = document.createElement('button');
+            Max.id="Max";
+            Max.className="btn btn-danger";
+            Max.textContent ="Max Age";
+            div.appendChild(Max);
+            Max.addEventListener('click',() => {
+                findMax();
+            });
+        
+        const  Min = document.createElement('button');
+            Min.id="Min";
+            Min.className="btn btn-danger";
+            Min.textContent ="Min Age";
+            div.appendChild(Min);
+            Min.addEventListener('click',() => {
+                findMin();
+            });
+        
+        page1.appendChild(div);
+        const reset = document.createElement('button');
+            reset.id="Reset";
+            reset.className="btn btn-danger";
+            reset.textContent ="Reset";
+            page1.appendChild(reset);
+            reset.addEventListener('click',() => {
+                page1.innerHTML='';
+                friend_list.length=0;
+                let random = Math.floor(Math.random()*9)+1;
+                friend_input(random);
+            });
+    }
+    function reset_remove(){
+        Go.remove()
+    };
+    
+    
+</script>
+</html>
